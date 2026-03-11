@@ -42,6 +42,7 @@
         {% endif %}
         {% endwith %}
 
+        <!-- Formulário que envia os novos dados de acesso para o servidor salvar no banco -->
         <form action="{{ url_for('cadastro_usuario') }}" method="POST" class="sales-form">
             <div class="form-group">
                 <label for="nome">Nome Completo</label>

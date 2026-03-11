@@ -14,6 +14,7 @@
 
 <body>
     <div class="container container-dashboard">
+        <!-- Menu de navegação superior -->
         <nav class="top-nav">
             <a href="{{ url_for('index') }}" class="nav-link">Home</a>
             <a href="{{ url_for('cadastro') }}" class="nav-link">Nova Venda</a>
@@ -26,6 +27,7 @@
             <p class="subtitle" style="margin-bottom: 2rem;">Resumo geral de desempenho do seu negócio.</p>
         </header>
 
+        <!-- Seção contendo os cards de resumo geral (Faturamento, Total de vendas, etc) -->
         <div class="metrics-grid">
             <div class="metric-card">
                 <h3>Faturamento Total</h3>
@@ -57,6 +59,7 @@
             </div>
         </div>
 
+        <!-- Área onde os gráficos dinâmicos (Chart.js) serão desenhados -->
         <div class="charts-grid">
             <div class="chart-card">
                 <h3>Receita por Produto (R$)</h3>
@@ -80,6 +83,7 @@
             </div>
         </div>
 
+        <!-- Área que lista apenas as 5 últimas vendas registradas -->
         <div class="recent-sales">
             <h2 style="text-align: left; margin: 2.5rem 0 1rem; font-size: 1.25rem;">Últimas 5 Vendas</h2>
             <div class="table-responsive">
@@ -93,6 +97,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- Loop que cria uma linha na tabela para cada uma das vendas recentes -->
                         {% for venda in recentes %}
                         <tr>
                             <td>#{{ venda.id }}</td>
@@ -116,7 +121,7 @@
     <!-- Inicialização dos Gráficos com Chart.js -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Lendo dados injetados via jinja2 de forma segura para Array JS
+            // Lendo dados enviados pelo Python (via Jinja2) de forma segura para usar nos gráficos JavaScript
             const backendData = {{ chart_data | tojson | safe
         }};
 

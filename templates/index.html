@@ -12,6 +12,7 @@
 </head>
 
 <body>
+    <!-- Bloco para recuperar e exibir mensagens de notificação (sucesso ou erro) enviadas pelo Python -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <div class="flash-messages" style="margin-bottom: 1.5rem; text-align: center;">
@@ -38,6 +39,7 @@
             <p class="subtitle">O controle total das suas vendas em uma interface fluida, rápida e inteligente. Cadastre
                 dados e gere visualizações instantâneas.</p>
 
+            <!-- Verifica se o usuário já está logado para exibir os botões do painel -->
             {% if session.user_id %}
             <p style="color: #6ee7b7; font-weight: 600; margin-bottom: 2rem;">Boas-vindas de volta, {{ session.user_nome
                 }}!</p>
@@ -54,6 +56,7 @@
             </div>
             {% endif %}
 
+            <!-- Seção de cards exibindo as vantagens do sistema -->
             <div class="features-grid">
                 <div class="feature-card">
                     <span class="feature-icon">📊</span>

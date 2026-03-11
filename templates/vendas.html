@@ -38,6 +38,7 @@
         {% endif %}
         {% endwith %}
 
+        <!-- Tabela principal que lista todo o histórico de vendas do usuário logado -->
         <div class="table-responsive">
             <table class="sales-table">
                 <thead>
@@ -54,6 +55,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Laço de repetição: cria uma nova linha <tr> na tabela para cada venda encontrada no banco -->
                     {% for venda in vendas %}
                     <tr>
                         <td>#{{ venda['id'] }}</td>

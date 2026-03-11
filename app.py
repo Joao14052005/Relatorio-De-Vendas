@@ -26,6 +26,7 @@ def date_br_format(value):
     except IndexError:
         return value
 
+# Função para tratar e converter os valores monetários digitados
 def parse_monetary(value):
     if not value:
         raise ValueError("Valor vazio")
@@ -41,7 +42,7 @@ def parse_monetary(value):
             
     return float(val_str)
 
-
+# Cria as tabelas necessárias no banco SQLite se elas não existirem
 def init_db():
     conn = sqlite3.connect('database.db')
     
@@ -80,15 +81,16 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Inicializa o banco ao rodar o app
+# Inicializa o banco de dados ao iniciar o aplicativo
 init_db()
 
+# Abre a conexão com o banco e permite acessar os resultados como dicionários (Row)
 def get_db_connection():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     return conn
 
-# Decorator de login
+# Bloqueia rotas e exige que o usuário esteja logado no sistema para acessar
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -98,10 +100,12 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Rota principal (Página Inicial)
 @app.route("/")
 def index():
     return render_template("index.html")
 
+# Rota para cadastrar um novo usuário
 @app.route("/cadastro-usuario", methods=["GET", "POST"])
 def cadastro_usuario():
     if request.method == "POST":
@@ -109,6 +113,7 @@ def cadastro_usuario():
         email = request.form['email']
         senha = request.form['senha']
         
+        # Criptografa a senha antes de salvar por segurança
         senha_hash = generate_password_hash(senha)
         
         conn = get_db_connection()
@@ -124,6 +129,7 @@ def cadastro_usuario():
             
     return render_template("cadastro_usuario.html")
 
+# Rota para o login do usuário
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -134,7 +140,9 @@ def login():
         user = conn.execute('SELECT * FROM usuarios WHERE email = ?', (email,)).fetchone()
         conn.close()
         
+        # Valida se o usuário existe e se a senha digitada corresponde com o hash do banco
         if user and check_password_hash(user['senha_hash'], senha):
+            # Salva o id e o nome na sessão atual para manter o usuário logado
             session['user_id'] = user['id']
             session['user_nome'] = user['nome']
             flash("Login realizado com sucesso!", "success")
@@ -144,12 +152,14 @@ def login():
             
     return render_template("login.html")
 
+# Rota para sair da conta e limpar a sessão
 @app.route("/logout")
 def logout():
     session.clear()
     flash("Logout realizado com sucesso.", "success")
     return redirect(url_for('index'))
 
+# Rota de cadastro manual de uma nova venda no sistema
 @app.route("/cadastro", methods=["GET", "POST"])
 @login_required
 def cadastro():
@@ -181,6 +191,7 @@ def cadastro():
         
     return render_template("cadastro.html")
 
+# Lista e exibe as vendas pertencentes ao usuário logado
 @app.route("/vendas")
 @login_required
 def vendas():
@@ -189,6 +200,7 @@ def vendas():
     conn.close()
     return render_template("vendas.html", vendas=vendas_lista)
 
+# Permite o usuário editar informações de uma venda já registrada
 @app.route("/editar/<int:id>", methods=["GET", "POST"])
 @login_required
 def editar(id):
@@ -228,6 +240,7 @@ def editar(id):
     conn.close()
     return render_template("cadastro.html", venda=venda)
 
+# Rota para apagar um registro de venda do banco
 @app.route("/excluir/<int:id>", methods=["POST"])
 @login_required
 def excluir(id):
@@ -238,10 +251,12 @@ def excluir(id):
     flash("Venda excluída com sucesso!", "success")
     return redirect(url_for('vendas'))
 
+# Prepara, calcula e envia as informações e o faturamento para o Dashboard
 @app.route("/dashboard")
 @login_required
 def dashboard():
     conn = get_db_connection()
+    # Busca todas as vendas do usuário logado
     todas_vendas = conn.execute('SELECT * FROM vendas WHERE user_id = ?', (session['user_id'],)).fetchall()
     
     # Cálculos das métricas com Python

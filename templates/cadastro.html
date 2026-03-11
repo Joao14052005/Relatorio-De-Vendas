@@ -39,6 +39,7 @@
         {% endif %}
         {% endwith %}
 
+        <!-- Formulário que envia os dados para o Python (serve tanto para criar quanto para editar uma venda) -->
         <form action="{% if venda %}{{ url_for('editar', id=venda.id) }}{% else %}{{ url_for('cadastro') }}{% endif %}"
             method="POST" class="sales-form">
             <div class="form-group">
